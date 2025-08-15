@@ -1,0 +1,102 @@
+<nav class="flex h-16 w-full items-center justify-center rounded-b-lg bg-primary-400 drop-shadow-lg">
+  <div class="m-2 flex h-full w-full items-center justify-between">
+    <div class="flex flex-row items-center justify-center space-x-2 text-center">
+      <!-- Replaced Next.js Image component with a standard img tag -->
+      <img
+        src="https://placehold.co/50x50/00bfa5/ffffff?text=E"
+        alt="emerald"
+        width="50"
+        height="50"
+        class="m-5"
+      />
+      <h1 class="flex text-4xl text-primary-100">Emerald</h1>
+    </div>
+    <!-- The search input container. Use an ID to reference it in the script. -->
+    <div
+      id="search-container"
+      class="mr-40 flex w-[26rem] items-center rounded-md border-[1px] border-white text-primary-100"
+    >
+      <svg
+        class="mx-2 text-xl"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19.707 18.293l-5.388-5.388A8 8 0 1014 10a8 8 0 00-4.293-7.293L8.707 1.707a1 1 0 00-1.414 1.414L7.586 4.414a1 1 0 001.414-1.414L10 1a8 8 0 018 8c0 2.2-1.2 4.128-3 5.16L18.293 19a1 1 0 001.414 0 1 1 0 000-1.414zM4 9a5 5 0 1110 0A5 5 0 014 9z"
+          clip-rule="evenodd"
+          fill-rule="evenodd"
+        ></path>
+      </svg>
+      <input
+        id="search-input"
+        type="text"
+        class="w-96 border-0 bg-transparent p-2 text-base outline-none"
+        placeholder="https://google.com"
+      />
+    </div>
+    <div class="mr-5 flex flex-row space-x-3">
+      <!-- Replaced Next.js Link component with a standard anchor tag -->
+      <a href="/">
+        <button class="rounded-md bg-primary-500 p-2 text-3xl text-white transition-all hover:bg-primary-600">
+          <!-- Replaced react-icons component with an inline SVG for the Exit icon -->
+          <svg
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8"
+          >
+            <path
+              d="M10 2a8 8 0 100 16 8 8 0 000-16zM6.5 9a.5.5 0 01.5-.5h5a.5.5 0 010 1h-5a.5.5 0 01-.5-.5z"
+            ></path>
+          </svg>
+        </button>
+      </a>
+    </div>
+  </div>
+</nav>
+<script is:inline>
+  const isUrl = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  const xor = {
+    encode: (str) => btoa(str) // A simple base64 encoding for demonstration
+  };
+
+  // Get the element references after the component has loaded on the client.
+  const input = document.getElementById("search-input");
+  const searchContainer = document.getElementById("search-container");
+
+  const Search = () => {
+    if (!input || input.value === "") return;
+    let url = input.value;
+    if (!isUrl(url)) {
+      url = `https://search.brave.com/search?q=${url}`;
+    } else if (!(url.startsWith("https://") || url.startsWith("http://"))) {
+      url = `http://${url}`;
+    }
+    url = xor.encode(url);
+    // Use standard window.location to navigate in Astro
+    window.location.href = `/service?q=${url}`;
+  };
+
+  if (input) {
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        Search();
+      }
+    });
+  }
+
+  if (searchContainer) {
+    searchContainer.addEventListener("click", () => {
+      input.focus();
+    });
+  }
+</script>

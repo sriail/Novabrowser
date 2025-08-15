@@ -1,17 +1,15 @@
 <nav class="flex h-16 w-full items-center justify-center rounded-b-lg bg-primary-400 drop-shadow-lg">
   <div class="m-2 flex h-full w-full items-center justify-between">
     <div class="flex flex-row items-center justify-center space-x-2 text-center">
-      <!-- Replaced Next.js Image component with a standard img tag -->
       <img
         src="https://placehold.co/50x50/00bfa5/ffffff?text=E"
-        alt="NovaBrowser"
+        alt="Nova"
         width="50"
         height="50"
         class="m-5"
       />
-      <h1 class="flex text-4xl text-primary-100">NovaSearch</h1>
+      <h1 class="flex text-4xl text-primary-100">NovaBrowser</h1>
     </div>
-
     <div
       id="search-container"
       class="mr-40 flex w-[26rem] items-center rounded-md border-[1px] border-white text-primary-100"
@@ -36,7 +34,6 @@
       />
     </div>
     <div class="mr-5 flex flex-row space-x-3">
-      <!-- Replaced Next.js Link component with a standard anchor tag -->
       <a href="/">
         <button class="rounded-md bg-primary-500 p-2 text-3xl text-white transition-all hover:bg-primary-600">
           <svg
@@ -55,28 +52,44 @@
   </div>
 </nav>
 
-
 <script is:inline>
-
+  // Mock the xor.encode function from your original code.
+  // You would need to add your actual implementation here.
   const xor = {
     encode: (str) => btoa(str) // A simple base64 encoding for demonstration
   };
 
+  // Get the element references after the component has loaded on the client.
   const input = document.getElementById("search-input");
   const searchContainer = document.getElementById("search-container");
+
+
+  const SearchEngines = {
+    DuckDuckGo: "https://duckduckgo.com/?q=%s",
+    Brave: "https://search.brave.com/search?q=%s",
+    Google: "https://www.google.com/search?q=%s"
+  };
+
+  // Mocking the Settings class functionality
+  let currentSearchEngine = SearchEngines.DuckDuckGo;
+  const Settings = {
+    searchEngine: (engine) => {
+
+      currentSearchEngine = engine || SearchEngines.DuckDuckGo;
+    }
+  };
 
   const Search = () => {
     if (!input || input.value === "") return;
     const inputValue = input.value;
-    const template = `https://search.brave.com/search?q=%s`;
+    const template = currentSearchEngine;
     let finalUrl;
 
-  
     try {
       new URL(inputValue);
       finalUrl = inputValue;
     } catch (_) {
-      // If that fails, try adding http://. If it's a valid host with a '.', use it.
+
       try {
         const tempUrl = new URL(`http://${inputValue}`);
         if (tempUrl.hostname.includes(".")) {

@@ -4,14 +4,14 @@
       <!-- Replaced Next.js Image component with a standard img tag -->
       <img
         src="https://placehold.co/50x50/00bfa5/ffffff?text=E"
-        alt="emerald"
+        alt="NovaBrowser"
         width="50"
         height="50"
         class="m-5"
       />
-      <h1 class="flex text-4xl text-primary-100">Emerald</h1>
+      <h1 class="flex text-4xl text-primary-100">NovaSearch</h1>
     </div>
-    <!-- The search input container. Use an ID to reference it in the script. -->
+
     <div
       id="search-container"
       class="mr-40 flex w-[26rem] items-center rounded-md border-[1px] border-white text-primary-100"
@@ -39,7 +39,6 @@
       <!-- Replaced Next.js Link component with a standard anchor tag -->
       <a href="/">
         <button class="rounded-md bg-primary-500 p-2 text-3xl text-white transition-all hover:bg-primary-600">
-          <!-- Replaced react-icons component with an inline SVG for the Exit icon -->
           <svg
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -55,35 +54,45 @@
     </div>
   </div>
 </nav>
+
+
 <script is:inline>
-  const isUrl = (url) => {
-    try {
-      new URL(url);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  };
 
   const xor = {
     encode: (str) => btoa(str) // A simple base64 encoding for demonstration
   };
 
-  // Get the element references after the component has loaded on the client.
   const input = document.getElementById("search-input");
   const searchContainer = document.getElementById("search-container");
 
   const Search = () => {
     if (!input || input.value === "") return;
-    let url = input.value;
-    if (!isUrl(url)) {
-      url = `https://search.brave.com/search?q=${url}`;
-    } else if (!(url.startsWith("https://") || url.startsWith("http://"))) {
-      url = `http://${url}`;
+    const inputValue = input.value;
+    const template = `https://search.brave.com/search?q=%s`;
+    let finalUrl;
+
+  
+    try {
+      new URL(inputValue);
+      finalUrl = inputValue;
+    } catch (_) {
+      // If that fails, try adding http://. If it's a valid host with a '.', use it.
+      try {
+        const tempUrl = new URL(`http://${inputValue}`);
+        if (tempUrl.hostname.includes(".")) {
+          finalUrl = tempUrl.toString();
+        } else {
+          // Otherwise, it's a search term.
+          finalUrl = template.replace("%s", encodeURIComponent(inputValue));
+        }
+      } catch (_) {
+        // If all else fails, treat it as a search term.
+        finalUrl = template.replace("%s", encodeURIComponent(inputValue));
+      }
     }
-    url = xor.encode(url);
-    // Use standard window.location to navigate in Astro
-    window.location.href = `/service?q=${url}`;
+
+    const encodedUrl = xor.encode(finalUrl);
+    window.location.href = `/service?q=${encodedUrl}`;
   };
 
   if (input) {
